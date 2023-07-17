@@ -16,11 +16,34 @@ const db = mysql.createConnection({
   database: "student_database",
 });
 
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting to database:", err);
+    return;
+  }
+  console.log("Connected to MySQL database");
+});
+
 app.listen(3004, () => {
   console.log("app running at port " + 3004);
 });
 
-app.get("/", (req, res) => {
+function verifyToken(req, res, next) {
+  const authToken = req.headers["authorization"];
+  if (authToken) {
+    const token = authToken.split(" ")[1];
+    jwt.verify(token, "myToken", (err, data) => {
+      if (err) {
+        return res.status(401).send("Invalid token");
+      }
+      next();
+    });
+  } else {
+    return res.status(401).send("Provide authToken");
+  }
+}
+
+app.get("/", verifyToken, (req, res) => {
   let query = "select * from students";
   db.query(query, (err, data) => {
     if (err) {
@@ -70,7 +93,7 @@ app.post("/login", (req, res) => {
         res.send("No student Found ");
       }
       const user = data[0];
-      bycrypt.compare(password, user.password, (err, isMatch) => {
+      bcrypt.compare(password, user.password, (err, isMatch) => {
         if (err) {
           res.send(err);
         }
