@@ -1,10 +1,10 @@
 const fs = require("fs");
 
-const file = fs.readFileSync("./file.txt", "utf-8");
+const file = fs.readFileSync("file.txt");
 
 console.log(file);
 
-fs.readFile("./file.txt", "utf-8", (err, data) => {
+fs.readFile("file.txt", "utf-8", (err, data) => {
   if (err) {
     console.log(err);
   } else {
@@ -12,12 +12,14 @@ fs.readFile("./file.txt", "utf-8", (err, data) => {
   }
 });
 
-fs.writeFileSync("./files.txt", "hello world");
+fs.writeFileSync("file.txt", "hello world");
 
-fs.writeFileSync("./files.txt", "hello sriram", { flag: "a" }, (err) => {
+fs.writeFileSync("file.txt", "hello sriram", { flag: "a" }, (err) => {
   if (err) {
     console.log(err);
   } else {
     console.log("done");
   }
 });
+
+fs.appendFileSync("file.txt", "hello again");
